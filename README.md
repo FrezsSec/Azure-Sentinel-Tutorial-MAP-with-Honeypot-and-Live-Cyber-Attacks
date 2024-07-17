@@ -174,7 +174,7 @@ The [IP Geolocation](https://ipgeolocation.io) is the website we will use to gat
 
 1. To get the PowerShell script, head over to the following [GitHub repository](https://github.com/joshmadakor1/Sentinel-Lab/blob/main/Custom_Security_Log_Exporter.ps1?source=post_page-----45a67e20d1cb--------------------------------).
 2. Select the full script with `CTRL+A` and then copy it with `CTRL+C`.
-3. On your Windows VM, go to the bottom left search bar and type `PowerShell ISE`. Open PowerShell ISE from the search results.
+3. On your Windows VM, go to the bottom left search bar and type `PowerShell ISE`. Open PowerShell ISE with administrative privileges from the search results.
 4. Click on the white page icon to open a new script page.
   
     ![32](https://github.com/user-attachments/assets/6a41dcf7-d711-436d-a227-733d4e7a9675)
@@ -191,4 +191,38 @@ The [IP Geolocation](https://ipgeolocation.io) is the website we will use to gat
     ![34](https://github.com/user-attachments/assets/b9e4310c-57c9-4d98-b6e2-49d70558c49e)
 
 11. Save it on Desktop as Log_Exporter
+12. Now run the script
 
+    ![35](https://github.com/user-attachments/assets/0fc99c13-2498-46e9-bddb-00ff95f6e35e)
+
+
+    ![37](https://github.com/user-attachments/assets/d56d1b5d-43c2-4c3f-9329-74e0db2e9e5d)
+
+The script scans security logs for Event ID 4625 (failed login events), extracts the IP addresses involved, fetches their geolocation data, and compiles this information into a new log file saved as "failed_rdp" in C:\ProgramData.
+ 
+    ![36](https://github.com/user-attachments/assets/baf43b83-c39b-4bc2-b855-0d14a5d8d024)
+
+## Step 9: Create Custom Log with Geo Data in Log Analytics Workspace
+
+1. Navigate back to the Azure portal and search for "Log Analytics Workspaces".
+2. Select your workspace from the list.
+3. In the left-hand menu, click on "Tables".
+4. Create a new custom log (MMA-based).
+
+   ![38](https://github.com/user-attachments/assets/bc778857-6761-43fa-8d7a-9c918faf7a47)
+
+5. Since the log is on our VM machine, we will copy the contents of "failed_rdp" located in C:\ProgramData to a file on our host machine. Save it as failed_rdp.log
+6. Add the file.
+
+   ![39](https://github.com/user-attachments/assets/a6426b2e-178f-4cb2-aed3-85541b13acb1)
+
+7. Select Next.
+8. This is how it should look. If it's right, click 'Next'.
+
+   ![40](https://github.com/user-attachments/assets/7218ebd4-3255-44e3-ac95-bf946b0578fb)
+
+9. Now, add the file path where the data resides on your VM: `C:\ProgramData\failed_rdp.log`.
+
+   ![41](https://github.com/user-attachments/assets/f8c76311-5a11-4b17-bcdd-cbd753d7bdd5)
+
+10. 
