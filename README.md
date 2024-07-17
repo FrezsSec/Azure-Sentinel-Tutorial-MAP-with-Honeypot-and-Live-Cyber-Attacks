@@ -33,7 +33,7 @@ We will extract the IP addresses of users attempting to log into our VM. These I
     - Confirm the licensing terms.
 5. Proceed to the Disks configuration by clicking "Next: Disks >".
 
-   ![4](https://github.com/user-attachments/assets/f4d8504b-d1b9-4b0b-9dc7-9f5862d521c5)
+    ![4](https://github.com/user-attachments/assets/f4d8504b-d1b9-4b0b-9dc7-9f5862d521c5)
 
 6. Move to the Networking configuration by clicking "Next: Networking >".
 
@@ -62,12 +62,12 @@ We will extract the IP addresses of users attempting to log into our VM. These I
 The purpose is to ingest logs from the virtual machine. We will ingest Windows event logs and create custom logs that contain geographic information to discover where the attackers are coming from.
 1. Navigate to the Azure portal and go to the Log Analytics Workspaces section, or you can find it by searching for "Log Analytics Workspaces" in the search bar.
 
-   ![9](https://github.com/user-attachments/assets/d1fd19a0-9cca-4823-a4ca-90ac4e4aefb4)
+     ![9](https://github.com/user-attachments/assets/d1fd19a0-9cca-4823-a4ca-90ac4e4aefb4)
 
 
 2. Click on "Create log analytics workspace." This is where those logs will be stored, and our SIEM will connect to this workspace to display the geographic data.
 
-   ![10](https://github.com/user-attachments/assets/db7cc1cb-9840-4443-b634-3811c9ed84db)
+     ![10](https://github.com/user-attachments/assets/db7cc1cb-9840-4443-b634-3811c9ed84db)
 
     - Select the resource group `Honeypotlab`.
     - Name the workspace `log-honeypot`.
@@ -78,25 +78,25 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 3. Review and create the workspace by clicking "Review and create" and then "Create."
 4. Wait for the deployment to complete.
 
-  ![13](https://github.com/user-attachments/assets/5081e440-1c1a-4b69-9c68-7dba3a867ba7)
+     ![13](https://github.com/user-attachments/assets/5081e440-1c1a-4b69-9c68-7dba3a867ba7)
 
 ## Step 4: Enable Log Collection in Microsoft Defender for Cloud
 1. Navigate to Microsoft Defender for Cloud in the Azure portal.
 
-   ![14](https://github.com/user-attachments/assets/883ab258-1772-428e-9a5f-09103d46de71)
+     ![14](https://github.com/user-attachments/assets/883ab258-1772-428e-9a5f-09103d46de71)
 
 2. Go to "Environment Settings".
  
-  ![15](https://github.com/user-attachments/assets/82601231-74c6-43b7-ba35-7c256b0edb17)
+    ![15](https://github.com/user-attachments/assets/82601231-74c6-43b7-ba35-7c256b0edb17)
 
 3. Click on the down arrow next to "Azure Subscription 1". You will then see our lab's analytics workspace named "log-honeypot". Select it.
 
-   ![16](https://github.com/user-attachments/assets/071333a9-ee3d-4bb4-9d2f-320bf9b79417)
+    ![16](https://github.com/user-attachments/assets/071333a9-ee3d-4bb4-9d2f-320bf9b79417)
 
 4. Enable the Servers plan. Then save it.
 
-   ![17](https://github.com/user-attachments/assets/9eb404ed-ed15-4add-88b8-c0136ab1bd45)
-
+    ![17](https://github.com/user-attachments/assets/9eb404ed-ed15-4add-88b8-c0136ab1bd45)
+ 
 5. Click on "Data collection" on the left side.
 
 6. Set data collection to "All Events" and save the settings.
@@ -128,7 +128,7 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 1. Go to the Azure portal and select Microsoft Sentinel.
 2. Click on "Create".
    
- ![23](https://github.com/user-attachments/assets/e8d27092-edf8-4110-b430-069e8b5c357a)
+   ![23](https://github.com/user-attachments/assets/e8d27092-edf8-4110-b430-069e8b5c357a)
 
 3. Select the log analytics workspace we created (`log-honeypot`) and add it.
 
@@ -154,3 +154,41 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 9. When prompted regarding the network settings in your VM, click "Yes".
 
 Next, we will disable the firewall to allow ICMP traffic from the internet, making our system discoverable.
+
+#### Disable the Windows Firewall
+
+Next, we will disable the firewall to allow ICMP traffic from the internet, making our system discoverable.
+
+1. On your Windows VM, go to Windows Defender Firewall.
+
+    ![31](https://github.com/user-attachments/assets/f0bc6b02-a78c-4927-98aa-643725619b2c)
+
+2. On the left side, click "Turn Windows Defender Firewall on or off".
+3. Turn off Windows Defender Firewall for all profiles.
+
+   ![30](https://github.com/user-attachments/assets/337c8e6f-f434-48e2-82a8-b1d1dfadf952)
+
+## Step 8: Download the IPGeo PowerShell script
+
+The [IP Geolocation](https://ipgeolocation.io) is the website we will use to gather our geolocation data.
+
+1. To get the PowerShell script, head over to the following [GitHub repository](https://github.com/joshmadakor1/Sentinel-Lab/blob/main/Custom_Security_Log_Exporter.ps1?source=post_page-----45a67e20d1cb--------------------------------).
+2. Select the full script with `CTRL+A` and then copy it with `CTRL+C`.
+3. On your Windows VM, go to the bottom left search bar and type `PowerShell ISE`. Open PowerShell ISE from the search results.
+4. Click on the white page icon to open a new script page.
+  
+    ![32](https://github.com/user-attachments/assets/6a41dcf7-d711-436d-a227-733d4e7a9675)
+
+5. Paste the Powershell script.
+
+   ![33](https://github.com/user-attachments/assets/5fb16630-e627-40e6-b9c9-512b62f179aa)
+
+6. Go to [IP Geolocation](https://ipgeolocation.io/) and create a free account to get API access.
+7. Once you sign up and verify your account, log in to retrieve your API key. Copy your API key.
+8. In your PowerShell script, locate the existing API key.
+9. Delete the placeholder key and paste your API key in its place.
+
+    ![34](https://github.com/user-attachments/assets/b9e4310c-57c9-4d98-b6e2-49d70558c49e)
+
+11. Save it on Desktop as Log_Exporter
+
