@@ -1,6 +1,9 @@
 # Azure Sentinel tutorial MAP with Honeypot and Live Cyber Attacks
 
 This guide provides a step-by-step walkthrough for setting up an Azure Sentinel project with a Windows machine exposed to the internet as a honeypot. The goal is to monitor, detect, and analyze potential security threats.
+We will extract the IP addresses of users attempting to log into our VM. These IP addresses will be queried using a geolocation API site to determine their geographical location. Using this information, we will create custom logs that include longitude, latitude, and country data. These logs will then be sent to the Log Analytics workspace in Azure. By configuring our SIEM (Security Information and Event Management) system, we can visualize and plot the attackers' locations on a map.
+
+
 
 ## Step 1: Create an Azure Subscription
 1. Go to [Azure's official website](https://azure.microsoft.com/en-us/) and create a free Azure account.
@@ -36,7 +39,7 @@ This guide provides a step-by-step walkthrough for setting up an Azure Sentinel 
 
     ![5](https://github.com/user-attachments/assets/4525cc83-bb32-4c00-b4e9-9a1196312fd8)
 
-    - Choose "Advanced" under the Network Security Group (NSG) settings.
+    - Choose "Advanced" under the NIC Network Security Group settings.
 
       ![6](https://github.com/user-attachments/assets/d33d01ff-db26-42d2-9c12-f89b1b89f61f)
 
@@ -72,8 +75,8 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 
       ![12](https://github.com/user-attachments/assets/9bd9197a-c409-42f6-863b-824efde0f628)
 
-4. Review and create the workspace by clicking "Review and create" and then "Create."
-5. Wait for the deployment to complete.
+3. Review and create the workspace by clicking "Review and create" and then "Create."
+4. Wait for the deployment to complete.
 
   ![13](https://github.com/user-attachments/assets/5081e440-1c1a-4b69-9c68-7dba3a867ba7)
 
@@ -82,31 +85,72 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 
    ![14](https://github.com/user-attachments/assets/883ab258-1772-428e-9a5f-09103d46de71)
 
-3. Go to "Environment Settings".
+2. Go to "Environment Settings".
  
   ![15](https://github.com/user-attachments/assets/82601231-74c6-43b7-ba35-7c256b0edb17)
 
-4. Click on the down arrow next to "Azure Subscription 1". You will then see our lab's analytics workspace named "log-honeypot". Select it.
+3. Click on the down arrow next to "Azure Subscription 1". You will then see our lab's analytics workspace named "log-honeypot". Select it.
 
    ![16](https://github.com/user-attachments/assets/071333a9-ee3d-4bb4-9d2f-320bf9b79417)
 
-5. Enable the Servers plan. Then save it.
+4. Enable the Servers plan. Then save it.
 
    ![17](https://github.com/user-attachments/assets/9eb404ed-ed15-4add-88b8-c0136ab1bd45)
 
-6. Click on "Data collection" on the left side.
+5. Click on "Data collection" on the left side.
 
-9. Set data collection to "All Events" and save the settings.
+6. Set data collection to "All Events" and save the settings.
 
     ![18](https://github.com/user-attachments/assets/29b75eeb-fa9b-4623-b99a-7b6102d41d24)
 
 
 ## Step 5: Connect the VM to the Log Analytics Workspace
 1. Return to the Log Analytics Workspaces section in the Azure portal.
-2. Select the workspace `honeypot-lab1`.
-3. Click on "Virtual Machines (deprecated)" to connect your VM.
-    - Select your VM (e.g., `honeypot-vm`) and click "Connect."
-4. Wait for the connection to complete.
+2. Select the workspace "log-honeypot".
 
-## Summary
-By following these steps, you will have set up an Azure Sentinel environment with a honeypot VM exposed to the internet. This configuration allows you to monitor and analyze potential security threats, providing valuable insights into attack patterns and helping you enhance your security posture.
+   ![19](https://github.com/user-attachments/assets/882f5a96-17ba-4fef-b2d4-ceb31d9f515e)
+
+4. On the left, Click on "Virtual Machines (deprecated)" to connect your VM.
+
+    - Select your VM `honeypot-vm`.
+
+      ![21](https://github.com/user-attachments/assets/25921487-2c43-4daf-b289-150cdd5b9518)
+
+    - Then click Connect.
+
+      ![22](https://github.com/user-attachments/assets/d3970339-f003-4ff3-aea2-2ed812954d66)
+
+6. Wait for the connection to complete.
+
+
+## Step 6: Set up Microsoft Sentinel
+
+1. Go to the Azure portal and select Microsoft Sentinel.
+2. Click on "Create".
+   
+ ![23](https://github.com/user-attachments/assets/e8d27092-edf8-4110-b430-069e8b5c357a)
+
+3. Select the log analytics workspace we created (`log-honeypot`) and add it.
+
+   ![24](https://github.com/user-attachments/assets/922745df-4cbf-435b-a623-468b99816422)
+
+
+## Step 7: Configure the environment within the VM
+
+1. Navigate to "Virtual Machines".
+2. Select our VM.
+
+   ![25](https://github.com/user-attachments/assets/b75e2d76-d5a5-42c8-8952-657417cd9174)
+
+3. Copy our public IP address; we will use it to log in via Remote Desktop.
+4. On your Windows machine, go to the Start menu and type "Remote Desktop". Open the Remote Desktop application and paste the public IP address into the designated field. Then hit connect
+
+   ![26](https://github.com/user-attachments/assets/426eb69f-124b-470f-bfe0-1c98ada88132)
+
+5. You will see a place to enter credentials. Ignore the credentials that you see there and click on "More choices" at the bottom. Then, click on "Use a different account"
+6. Enter the username and password that you created while setting up the VM.
+7. The screen will then prompt you to log into your VM. Next, you will see a privacy settings screen. Toggle all settings off.
+8. Click "Accept" to proceed into your VM environment.
+9. When prompted regarding the network settings in your VM, click "Yes".
+
+Next, we will disable the firewall to allow ICMP traffic from the internet, making our system discoverable.
