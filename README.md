@@ -75,12 +75,31 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 4. Review and create the workspace by clicking "Review and create" and then "Create."
 5. Wait for the deployment to complete.
 
+  ![13](https://github.com/user-attachments/assets/5081e440-1c1a-4b69-9c68-7dba3a867ba7)
+
 ## Step 4: Enable Log Collection in Microsoft Defender for Cloud
 1. Navigate to Microsoft Defender for Cloud in the Azure portal.
-2. Go to "Environment Settings" and select your Azure subscription (e.g., Azure Subscription 1).
-3. Enable log collection for the workspace `honeypot-lab1`.
-4. Ensure that "Servers and SQL Servers" is enabled to allow event logging.
-5. Set data collection to "Collect All Events" and save the settings.
+
+   ![14](https://github.com/user-attachments/assets/883ab258-1772-428e-9a5f-09103d46de71)
+
+3. Go to "Environment Settings".
+ 
+  ![15](https://github.com/user-attachments/assets/82601231-74c6-43b7-ba35-7c256b0edb17)
+
+4. Click on the down arrow next to "Azure Subscription 1". You will then see our lab's analytics workspace named "log-honeypot". Select it.
+
+   ![16](https://github.com/user-attachments/assets/071333a9-ee3d-4bb4-9d2f-320bf9b79417)
+
+5. Enable the Servers plan. Then save it.
+
+   ![17](https://github.com/user-attachments/assets/9eb404ed-ed15-4add-88b8-c0136ab1bd45)
+
+6. Click on "Data collection" on the left side.
+
+9. Set data collection to "All Events" and save the settings.
+
+    ![18](https://github.com/user-attachments/assets/29b75eeb-fa9b-4623-b99a-7b6102d41d24)
+
 
 ## Step 5: Connect the VM to the Log Analytics Workspace
 1. Return to the Log Analytics Workspaces section in the Azure portal.
