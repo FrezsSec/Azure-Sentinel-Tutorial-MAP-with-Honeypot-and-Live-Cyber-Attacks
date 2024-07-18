@@ -193,10 +193,10 @@ The [IP Geolocation](https://ipgeolocation.io) is the website we will use to gat
 11. Save it on Desktop as Log_Exporter
 12. Now run the script
 
-    ![35](https://github.com/user-attachments/assets/0fc99c13-2498-46e9-bddb-00ff95f6e35e)
+    ![35](https://github.com/user-attachments/assets/f7c4debf-ae39-41b8-8392-e906a9fecb16)
 
+    ![37](https://github.com/user-attachments/assets/d488c4bb-d866-4b77-afed-6e35357aadd4)
 
-    ![37](https://github.com/user-attachments/assets/d56d1b5d-43c2-4c3f-9329-74e0db2e9e5d)
 
 The script scans security logs for Event ID 4625 (failed login events), extracts the IP addresses involved, fetches their geolocation data, and compiles this information into a new log file saved as "failed_rdp" in C:\ProgramData.
  
@@ -219,7 +219,7 @@ The script scans security logs for Event ID 4625 (failed login events), extracts
 7. Select Next.
 8. This is how it should look. If it's right, click 'Next'.
 
-   ![40](https://github.com/user-attachments/assets/7218ebd4-3255-44e3-ac95-bf946b0578fb)
+  ![40](https://github.com/user-attachments/assets/3947eeb6-4365-492f-ae4d-2e1103367443)
 
 9. Now, add the file path where the data resides on your VM: `C:\ProgramData\failed_rdp.log`.
 
@@ -240,11 +240,72 @@ The script scans security logs for Event ID 4625 (failed login events), extracts
 
 ## Step 10: Extract and Categorize Geo-data from Sample Logs
 
-1. Take a look at our sample logs in FAILED_RDP_WITH_GEO_CL.
-2. In the RawData columns, you'll find information like longitude, latitude, destination host, etc. We need to categorize these values from the raw data before obtaining geolocation data.
-3. Right-click the first log you see in the search results and click "Extract Fields from `FAILED_RDP_WITH_GEO_CL`".
-4. Under Main Example, highlight the latitude value (not the word ‘latitude’ itself). A window will automatically pop up.
-5. Under Field value, type ``latitude`` and under Field type, choose ``numeric``. Click ``Extract``.
-6. On the right, check that the SIEM is selecting the correct values on each sample log.
-7. Click ``Save extraction``.
+Use the following query to extract data from the RawData column and create columns for username, timestamp, latitude, longitude, sourcehost, state, label, and destinationhost:
 
+````sh
+FAILED_RDP_WITH_GEO_CL | example_log_CL
+
+| extend username = extract(@"username:([^,]+)", 1, RawData),
+         timestamp = extract(@"timestamp:([^,]+)", 1, RawData),
+         latitude = extract(@"latitude:([^,]+)", 1, RawData),
+         longitude = extract(@"longitude:([^,]+)", 1, RawData),
+         sourcehost = extract(@"sourcehost:([^,]+)", 1, RawData),
+         state = extract(@"state:([^,]+)", 1, RawData),
+         label = extract(@"label:([^,]+)", 1, RawData),
+         destinationhost = extract(@"destinationhost:([^,])", 1, RawData)
+| where destinationhost != "samplehost"
+| where sourcehost != ""
+| summarize event_count = count() by timestamp, label, state, sourcehost, username, destinationhost, longitude, latitude
+````
+
+The result will look like this:
+
+## Step 11: Set up our map within Microsoft Sentinel
+
+Next, we'll visualize our logs in Sentinel using the extracted data to track the origin of attacks on our VM worldwide.
+1. Navigate to Microsoft Sentinel > Select log-honeypot > Go to Threat management > Workbooks > Click + Add workbook.
+2. Click Edit > Tap the "…" on the right side of the screen to delete the existing widgets.
+
+   ![45](https://github.com/user-attachments/assets/92a5185f-2b3b-46f5-9846-d5882eec33ed)
+
+4. Click Add > Add query, and paste the following query:
+
+````sh
+FAILED_RDP_WITH_GEO_CL
+| extend latitude = extract("latitude:([0-9.-]+)", 1, RawData),
+         longitude = extract("longitude:([0-9.-]+)", 1, RawData),
+         destinationhost = extract("destinationhost:([^,]+)", 1, RawData),
+         username = extract("username:([^,]+)", 1, RawData),
+         sourcehost = extract("sourcehost:([^,]+)", 1, RawData),
+         state = extract("state:([^,]+)", 1, RawData),
+         country = extract("country:([^,]+)", 1, RawData),
+         label = extract("label:([^,]+)", 1, RawData),
+         timestamp = extract("timestamp:([^,]+)", 1, RawData)
+
+| project TimeGenerated, Computer, latitude, longitude, destinationhost, username, sourcehost, state, country, label, timestamp
+| summarize event_count=count() by sourcehost, latitude, longitude, country, label, destinationhost
+| where destinationhost != "samplehost"
+| where sourcehost != ""
+````
+
+5. Choose the "Map" option from the dropdown menu for visualization. In the map settings, you can configure what to display on the map, such as showing IP addresses and countries
+
+  ![47](https://github.com/user-attachments/assets/f01e0d6c-4ffd-45a0-842c-e3759188d7c0)
+
+## Step 12: Finalize and save threat visualization
+
+-  Click on "Save and close".
+-  Use the floppy disk icon at the top to save the map.
+- Title: Failed RDP World Map > Location > Resource group > click Apply.
+
+That’s it! By now, your VM should be attracting attacks. Congratulations!
+
+You can update the map by clicking the refresh icon near the top (ensure the PowerShell script continues to run to load additional logs into the map)
+
+![48](https://github.com/user-attachments/assets/28a1d5c8-af31-4565-ad65-503f5e690489)
+
+## FINAL STEP: Remove resources
+
+After completing the lab, delete the resources to prevent them from consuming your free credit.
+- Navigate to Resource group > honeypot-lab > Delete resource group.
+- Enter the name honeypot-lab to confirm the deletion.
