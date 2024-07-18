@@ -1,9 +1,16 @@
-# Azure Sentinel tutorial MAP with Honeypot and Live Cyber Attacks
+# Microsoft Sentinel Map with LIVE CYBER ATTACKS
 
-This guide provides a step-by-step walkthrough for setting up an Azure Sentinel project with a Windows machine exposed to the internet as a honeypot. The goal is to monitor, detect, and analyze potential security threats.
-We will extract the IP addresses of users attempting to log into our VM. These IP addresses will be queried using a geolocation API site to determine their geographical location. Using this information, we will create custom logs that include longitude, latitude, and country data. These logs will then be sent to the Log Analytics workspace in Azure. By configuring our SIEM (Security Information and Event Management) system, we can visualize and plot the attackers' locations on a map.
+This project sets up an Azure Sentinel environment with a Windows virtual machine configured as a honeypot. By exposing the VM to the internet and monitoring attempted logins, we gather IP addresses, query their geolocations, and visualize attack origins using Azure Sentinel.
 
+## Tools and Technologies Used
 
+- **Azure Sentinel**: Cloud-native SIEM service for security analytics, threat detection, and visualization.
+- **Azure Virtual Machines**: Provides scalable computing resources; used as a honeypot to monitor and capture attempted logins.
+- **Log Analytics Workspace**: Central repository for storing and analyzing logs from Azure and on-premises environments; used for custom log creation.
+- **PowerShell Scripting**
+
+  
+ ![Diagram](https://github.com/user-attachments/assets/59f39f11-0289-4eaa-93b7-ee397bba8589)
 
 ## Step 1: Create an Azure Subscription
 1. Go to [Azure's official website](https://azure.microsoft.com/en-us/) and create a free Azure account.
@@ -309,3 +316,5 @@ You can update the map by clicking the refresh icon near the top (ensure the Pow
 After completing the lab, delete the resources to prevent them from consuming your free credit.
 - Navigate to Resource group > honeypot-lab > Delete resource group.
 - Enter the name honeypot-lab to confirm the deletion.
+
+***Credits***: This project is based on a tutorial provided by [Josh Madakor](https://www.youtube.com/watch?v=RoZeVbbZ0o0&list=PLYioVjcP9koI1mCaS8iUyi2RJAFGY4Ptc&index=8)
