@@ -271,7 +271,7 @@ Next, we'll visualize our logs in Sentinel using the extracted data to track the
 
    ![45](https://github.com/user-attachments/assets/92a5185f-2b3b-46f5-9846-d5882eec33ed)
 
-4. Click Add > Add query, and paste the following query:
+3. Click Add > Add query, and paste the following query:
 
 ````sh
 FAILED_RDP_WITH_GEO_CL
@@ -291,7 +291,7 @@ FAILED_RDP_WITH_GEO_CL
 | where sourcehost != ""
 ````
 
-5. Choose the "Map" option from the dropdown menu for visualization. In the map settings, you can configure what to display on the map, such as showing IP addresses and countries
+4. Choose the "Map" option from the dropdown menu for visualization. In the map settings, you can configure what to display on the map, such as showing IP addresses and countries
 
   ![47](https://github.com/user-attachments/assets/f01e0d6c-4ffd-45a0-842c-e3759188d7c0)
 
