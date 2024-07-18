@@ -225,4 +225,26 @@ The script scans security logs for Event ID 4625 (failed login events), extracts
 
    ![41](https://github.com/user-attachments/assets/f8c76311-5a11-4b17-bcdd-cbd753d7bdd5)
 
-10. 
+10. Name your custom log and clikc next.
+
+    ![42](https://github.com/user-attachments/assets/cf0c327d-21e3-4fef-8a02-0c405d59733c)
+
+11. Create the custom log.
+12. Now navigate to your Log Analytics workspace.
+13. Go to `Logs`.
+14. In the query editor, type `FAILED_RDP_WITH_GEO_CL`.
+15. Click the blue Run button.
+16. Wait a moment for the results to load. This will return our sample logs with geolocation data.
+
+   ![43](https://github.com/user-attachments/assets/7619b8bd-f7b9-4f7a-88e0-8d0704763c56)
+
+## Step 10: Extract and Categorize Geo-data from Sample Logs
+
+1. Take a look at our sample logs in FAILED_RDP_WITH_GEO_CL.
+2. In the RawData columns, you'll find information like longitude, latitude, destination host, etc. We need to categorize these values from the raw data before obtaining geolocation data.
+3. Right-click the first log you see in the search results and click "Extract Fields from `FAILED_RDP_WITH_GEO_CL`".
+4. Under Main Example, highlight the latitude value (not the word ‘latitude’ itself). A window will automatically pop up.
+5. Under Field value, type ``latitude`` and under Field type, choose ``numeric``. Click ``Extract``.
+6. On the right, check that the SIEM is selecting the correct values on each sample log.
+7. Click ``Save extraction``.
+
