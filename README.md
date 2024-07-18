@@ -5,7 +5,7 @@ This project sets up an Azure Sentinel environment with a Windows virtual machin
 ## Tools and Technologies Used
 
 - **Azure Sentinel**: Cloud-native SIEM service for security analytics, threat detection, and visualization.
-- **Azure Virtual Machines**: Provides scalable computing resources; used as a honeypot to monitor and capture attempted logins.
+- **Azure Virtual Machines**: Used as a honeypot to monitor and capture attempted logins.
 - **Log Analytics Workspace**: Central repository for storing and analyzing logs from Azure and on-premises environments; used for custom log creation.
 - **PowerShell Scripting**
 
