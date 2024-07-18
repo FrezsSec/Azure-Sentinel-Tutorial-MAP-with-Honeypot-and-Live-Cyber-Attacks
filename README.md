@@ -160,8 +160,6 @@ The purpose is to ingest logs from the virtual machine. We will ingest Windows e
 8. Click "Accept" to proceed into your VM environment.
 9. When prompted regarding the network settings in your VM, click "Yes".
 
-Next, we will disable the firewall to allow ICMP traffic from the internet, making our system discoverable.
-
 #### Disable the Windows Firewall
 
 Next, we will disable the firewall to allow ICMP traffic from the internet, making our system discoverable.
@@ -207,7 +205,8 @@ The [IP Geolocation](https://ipgeolocation.io) is the website we will use to gat
 
 The script scans security logs for Event ID 4625 (failed login events), extracts the IP addresses involved, fetches their geolocation data, and compiles this information into a new log file saved as "failed_rdp" in C:\ProgramData.
  
-    ![36](https://github.com/user-attachments/assets/baf43b83-c39b-4bc2-b855-0d14a5d8d024)
+  ![36](https://github.com/user-attachments/assets/2630d2b7-2a7d-4809-8b49-6f058001d996)
+
 
 ## Step 9: Create Custom Log with Geo Data in Log Analytics Workspace
 
@@ -250,8 +249,7 @@ The script scans security logs for Event ID 4625 (failed login events), extracts
 Use the following query to extract data from the RawData column and create columns for username, timestamp, latitude, longitude, sourcehost, state, label, and destinationhost:
 
 ````sh
-FAILED_RDP_WITH_GEO_CL | example_log_CL
-
+FAILED_RDP_WITH_GEO_CL
 | extend username = extract(@"username:([^,]+)", 1, RawData),
          timestamp = extract(@"timestamp:([^,]+)", 1, RawData),
          latitude = extract(@"latitude:([^,]+)", 1, RawData),
@@ -259,13 +257,11 @@ FAILED_RDP_WITH_GEO_CL | example_log_CL
          sourcehost = extract(@"sourcehost:([^,]+)", 1, RawData),
          state = extract(@"state:([^,]+)", 1, RawData),
          label = extract(@"label:([^,]+)", 1, RawData),
-         destinationhost = extract(@"destinationhost:([^,])", 1, RawData)
+         destinationhost = extract(@"destinationhost:([^,]+)", 1, RawData)
 | where destinationhost != "samplehost"
 | where sourcehost != ""
 | summarize event_count = count() by timestamp, label, state, sourcehost, username, destinationhost, longitude, latitude
 ````
-
-The result will look like this:
 
 ## Step 11: Set up our map within Microsoft Sentinel
 
